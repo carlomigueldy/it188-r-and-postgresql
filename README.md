@@ -9,3 +9,5 @@ Instructions:
 My Sources: 
 1. https://www.r-bloggers.com/connecting-r-to-postgresql-on-linux/ 
 2. https://www.rdocumentation.org/packages/DBI/versions/0.1-11/topics/dbSendQuery
+3. https://www.r-bloggers.com/r-and-postgresql-using-rpostgresql-and-sqldf/
+4. https://www.datacareer.de/blog/connect-to-postgresql-with-r-a-step-by-step-example/

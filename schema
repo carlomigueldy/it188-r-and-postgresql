@@ -14,6 +14,14 @@ CREATE TABLE products(
 	qty INT
 );
 
+DROP TABLE IF EXISTS products_2 CASCADE;
+CREATE TABLE products_2(
+	id SERIAL PRIMARY KEY,
+	description VARCHAR,
+	price FLOAT,
+	qty INT
+);
+
 DROP TABLE IF EXISTS customer_orders CASCADE;
 CREATE TABLE customer_orders(
 	id SERIAL PRIMARY KEY,

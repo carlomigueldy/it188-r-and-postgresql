@@ -13,10 +13,10 @@ db <-DBI::dbConnect(pgdrv,
 DBI::dbListTables(db)
 
 # See records of a table accordingly
-dbGetQuery(db, 'SELECT * FROM customers')
-dbGetQuery(db, 'SELECT * FROM products')
-dbGetQuery(db, 'SELECT * FROM customer_orders')
-dbGetQuery(db, 'SELECT * FROM order_line')
+showCustomers <- dbReadTable(db, c("customers"))
+showProducts <- dbReadTable(db, c("products"))
+showCustomerOrders <- dbReadTable(db, c("customer_orders"))
+showOrderLines <- dbReadTable(db, c("order_line"))
 
 # INSERT; A customer orders 2 product
 dbSendQuery(db, 
@@ -31,4 +31,13 @@ dbSendQuery(db,
 
 # DLETE; Deleting order line record
 dbSendQuery(db, 'DELETE FROM order_line WHERE customer_order_id = 1')
+
+options(sqldf.RPostgreSQL.user ="postgres", 
+        sqldf.RPostgreSQL.password ="password",
+        sqldf.RPostgreSQL.dbname ="it188",
+        sqldf.RPostgreSQL.host ="localhost", 
+        sqldf.RPostgreSQL.port =5432)
+
+dbExistsTable(db, "products")
+myTable <- dbReadTable(db, c("customers"))
   
