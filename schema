@@ -34,6 +34,7 @@ CREATE TABLE order_line(
 	FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
+-- A INSERT // on Customer order, a product qty is diminished and total amount is updated 
 DROP FUNCTION IF EXISTS customerOrders();
 CREATE FUNCTION customerOrders()
 	RETURNS trigger AS
@@ -55,9 +56,35 @@ CREATE TRIGGER customerOrders
 AFTER INSERT ON order_line
 FOR EACH ROW 
 EXECUTE PROCEDURE customerOrders();
+-- / A INSERT 
+
+-- B UPDATE // on Customer order, a product qty is diminished and total amount is updated 
+-- DROP FUNCTION IF EXISTS customerOrdersUpdate();
+-- CREATE FUNCTION customerOrdersUpdate()
+-- 	RETURNS trigger AS
+-- $BODY$
+--BEGIN
+--	UPDATE products SET qty = (qty + OLD.qty) - NEW.qty WHERE id = NEW.product_id;
+	
+--	UPDATE customer_orders 
+--	SET total_amount = (total_amount - OLD.total_amount) + 
+--		(SELECT price FROM products WHERE id = NEW.product_id),
+--		updated_at = CURRENT_TIMESTAMP
+--	WHERE id = NEW.customer_order_id;
+--	RETURN NEW;
+-- END;
+-- $BODY$
+
+-- LANGUAGE plpgsql VOLATILE;
+
+-- CREATE TRIGGER customerOrdersUpdate
+-- AFTER UPDATE ON order_line
+-- FOR EACH ROW 
+-- EXECUTE PROCEDURE customerOrdersUpdate();
+-- / B UPDATE 
 
 INSERT INTO products (description, price, qty) 
-VALUES ('Rice', 59.95, 20), ('Durian', 25.95, 20);
+VALUES ('Rice', 59.95, 20), ('Durian', 25.95, 20), ('Nangka', 15.25, 20);
 
 INSERT INTO customers (name, address, phone) 
 VALUES ('Carlo Miguel', '43PD Maigo', '12356');
