@@ -1,0 +1,66 @@
+﻿DROP TABLE IF EXISTS customers CASCADE;
+CREATE TABLE customers(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR,
+	address VARCHAR,
+	phone VARCHAR
+);
+
+DROP TABLE IF EXISTS products CASCADE;
+CREATE TABLE products(
+	id SERIAL PRIMARY KEY,
+	description VARCHAR,
+	price FLOAT,
+	qty INT
+);
+
+DROP TABLE IF EXISTS customer_orders CASCADE;
+CREATE TABLE customer_orders(
+	id SERIAL PRIMARY KEY,
+	customer_id INT,
+	total_amount FLOAT DEFAULT 0,
+	created_at TIMESTAMP DEFAULT(CURRENT_TIMESTAMP),
+	updated_at TIMESTAMP DEFAULT NULL,
+	FOREIGN KEY (customer_id) REFERENCES customers (id)
+);
+
+DROP TABLE IF EXISTS order_line CASCADE;
+CREATE TABLE order_line(
+	customer_order_id INT,
+	product_id INT,
+	qty INT,
+	PRIMARY KEY (customer_order_id, product_id),
+	FOREIGN KEY (customer_order_id) REFERENCES customer_orders (id),
+	FOREIGN KEY (product_id) REFERENCES products (id)
+);
+
+DROP FUNCTION IF EXISTS customerOrders();
+CREATE FUNCTION customerOrders()
+	RETURNS trigger AS
+$BODY$
+BEGIN
+	UPDATE products SET qty = qty - NEW.qty WHERE id = NEW.product_id;
+	UPDATE customer_orders 
+	SET total_amount = total_amount + 
+		(SELECT price FROM products WHERE id = NEW.product_id),
+		updated_at = CURRENT_TIMESTAMP
+	WHERE id = NEW.customer_order_id;
+	RETURN NEW;
+END;
+$BODY$
+
+LANGUAGE plpgsql VOLATILE;
+
+CREATE TRIGGER customerOrders 
+AFTER INSERT ON order_line
+FOR EACH ROW 
+EXECUTE PROCEDURE customerOrders();
+
+INSERT INTO products (description, price, qty) 
+VALUES ('Rice', 59.95, 20), ('Durian', 25.95, 20);
+
+INSERT INTO customers (name, address, phone) 
+VALUES ('Carlo Miguel', '43PD Maigo', '12356');
+
+INSERT INTO customer_orders (customer_id)
+VALUES (1);
