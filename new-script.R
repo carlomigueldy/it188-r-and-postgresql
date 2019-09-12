@@ -26,9 +26,11 @@ showOrderLines <- dbReadTable(db, c("order_line"))
 
 # overwrite=TRUE will change both data and table structure
 # When row.name=TRUE then column named row.names will be added to the table
-dbWriteTable(db, "products_2", 
-             value=showProducts,
-             overwrite=TRUE,
-             row.names=FALSE)
+cname <- readline(prompt="Enter name: ")
+caddress <- readline(prompt="Enter address: ")
+cphone <- readline(prompt="Enter phone: ")
 
-inputQty <- readline(prompt="Enter qty: ")
+dbSendQuery(db,
+            paste("INSERT INTO customers (name, address, phone) 
+                  VALUES ('", cname, "','", caddress, "',", cphone,");"))
+

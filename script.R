@@ -9,6 +9,8 @@ db <-DBI::dbConnect(pgdrv,
                     host="localhost", port=5432,
                     user = 'postgres',
                     password = 'password')
+
+
 # See tables in Database
 DBI::dbListTables(db)
 
@@ -40,4 +42,12 @@ options(sqldf.RPostgreSQL.user ="postgres",
 
 dbExistsTable(db, "products")
 myTable <- dbReadTable(db, c("customers"))
-  
+
+cname <- readline(prompt="Enter name: ")
+caddress <- readline(prompt="Enter address: ")
+cphone <- readline(prompt="Enter phone: ")
+
+dbSendQuery(db,
+            paste("INSERT INTO customers (name, address, phone) 
+                  VALUES ('", cname, "','", caddress, "',", cphone,");"))
+
